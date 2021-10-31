@@ -3,6 +3,7 @@ package context
 import (
 	"fmt"
 	"log"
+	"os"
 	"server/core/infrastructure"
 	"server/external/postgresql"
 
@@ -17,17 +18,15 @@ type AppContext struct {
 	//RatingRepository infrastructure.RatingRepository,
 }
 
-const (
-	host     = ""
-	port     = 0
-	database = ""
-	username = ""
-	password = ""
-)
-
 func InitAppContext() AppContext {
 
-	sqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s", host, port, username, password, database)
+	var host string = os.Getenv("POSTGRES_HOST")
+	var port string = os.Getenv("POSTGRES_PORT")
+	var database string = os.Getenv("POSTGRES_DB_NAME")
+	var username string = os.Getenv("POSTGRES_USER")
+	var password string = os.Getenv("POSTGRES_PASSWORD")
+
+	sqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", host, port, username, password, database)
 	db, err := sqlx.Connect("postgres", sqlInfo)
 	if err != nil {
 		log.Println(err)

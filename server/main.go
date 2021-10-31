@@ -6,6 +6,8 @@ import (
 	"net/http"
 	aCtx "server/context"
 	"server/router"
+
+	"github.com/joho/godotenv"
 )
 
 // Middleware to inject app context
@@ -19,6 +21,11 @@ import (
 // }
 
 func main() {
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatalln("Unable to read environment variables from .env file.")
+	}
 
 	ctx := aCtx.InitAppContext()
 
