@@ -19,7 +19,7 @@ type AppContext struct {
 
 const (
 	host     = ""
-	port     = ""
+	port     = 0
 	database = ""
 	username = ""
 	password = ""

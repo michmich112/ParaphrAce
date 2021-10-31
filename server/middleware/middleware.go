@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"server/context"
 	"server/core/models"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -15,10 +16,7 @@ type createParaphraseReq struct {
 	OriginalText string `json:"text"`
 }
 
-type createUserRes struct {
-	SessionToken string `json:"session_token"`
-}
-
+// CreateUser creates a new user in the DB
 func CreateUser(appCtx context.AppContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Context-Type", "application/json")
@@ -41,27 +39,49 @@ func CreateUser(appCtx context.AppContext) http.HandlerFunc {
 }
 
 // CreateParaphrase creates a new paraphrase in the DB
-func CreateParaphrase(w http.ResponseWriter, r *http.Request) {
-	// set the header to content type x-www-form-urlencoded
-	// Allow all origin to handle cors issue
-	w.Header().Set("Context-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Context-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
-	var reqBody createParaphraseReq
+		var reqBody createParaphraseReq
+		var timestamp time.Time = time.Now()
 
-	// decode the json request to user
-	err := json.NewDecoder(r.Body).Decode(&reqBody)
+		// decode the json request to user
+		err := json.NewDecoder(r.Body).Decode(&reqBody)
 
-	if err != nil {
-		log.Fatalf("Unable to decode the request body.  %v", err)
+		if err != nil {
+			log.Fatalf("Unable to decode the request body.  %v", err)
+		}
+
+		user, err := appCtx.UserRepository.GetBySessionToken(reqBody.SessionToken)
+
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		// store original text to storage
+
+		p := models.Paraphrase{
+			UserId:    user.Id,
+			Timestamp: timestamp,
+		}
+
+		// call create paraphraseReq
+		p, err = appCtx.ParaphraseRespository.Create(p)
+
+		// Call ML api
+		// store returned test to storage
+		// update paraphrase in DB
+		// return storage uri
+
+		// format a response object
+		//res := "" //Todo implement this
+		// send the response
+		//json.NewEncoder(w).Encode(res)
+		w.WriteHeader(http.StatusOK)
 	}
-
-	// call create paraphraseReq
-
-	// format a response object
-	res := "" //Todo implement this
-	// send the response
-	json.NewEncoder(w).Encode(res)
 }
