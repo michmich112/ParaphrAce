@@ -1,18 +1,37 @@
 package postgresql
 
 import (
-	"database/sql"
-	"fmt"
-	"log"
-	"github.com/jmoiron/sqlx"
 	"server/core/infrastructure"
-);
+	"server/core/models"
 
-type userRepository struct {
-	db sqlx.Connect()
+	"github.com/jmoiron/sqlx"
+)
 
+type UserRepository struct {
+	db    sqlx.DB
+	table string
 }
 
-func New() infrastructure.UserRepository {
-	
+func NewUserRepository(db sqlx.DB) infrastructure.UserRepository {
+	return UserRepository{
+		db:    db,
+		table: "users",
+	}
+}
+
+func (r UserRepository) Create(user models.User) (models.User, error) {
+	_, err := r.db.NamedExec("INSERT INTO users (session_token) VALUES (:session_token)", user)
+	if err == nil {
+		updatedUser, err := r.GetBySessionToken(user.SessionToken)
+		if err == nil {
+			return updatedUser, nil
+		}
+	}
+	return user, err
+}
+
+func (r UserRepository) GetBySessionToken(token string) (models.User, error) {
+	user := models.User{}
+	err := r.db.Get(&user, "SELECT * FROM users WHERE session_token=$1", token)
+	return user, err
 }
