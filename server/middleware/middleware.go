@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"server/context"
@@ -63,8 +64,6 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 			return
 		}
 
-		// store original text to storage
-
 		p := models.Paraphrase{
 			UserId:    user.Id,
 			Timestamp: timestamp,
@@ -72,6 +71,19 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 
 		// call create paraphraseReq
 		p, err = appCtx.ParaphraseRespository.Create(p)
+
+		if err != nil {
+			log.Printf("[Paraphrase Create][Error] - %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		// store original text to storage
+		uri, err := appCtx.Storage.Save(fmt.Sprintf("%d-original", p.Id), reqBody.OriginalText)
+
+		// Update metadata with Uri of the original text
+		p.OriginalFileUri = uri
+		appCtx.ParaphraseRespository.Update(p)
 
 		// Call ML api
 		// store returned test to storage

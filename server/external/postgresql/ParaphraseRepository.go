@@ -1,6 +1,7 @@
 package postgresql
 
 import (
+	"log"
 	"server/core/infrastructure"
 	"server/core/models"
 
@@ -26,7 +27,7 @@ func (r ParaphraseRespository) GetById(id int64) (models.Paraphrase, error) {
 }
 
 func (r ParaphraseRespository) Create(paraphrase models.Paraphrase) (models.Paraphrase, error) {
-	res, err := r.db.NamedExec(`INSERT INTO paraphrase (user_id, 
+	res, err := r.db.NamedQuery(`INSERT INTO paraphrase (user_id, 
 		rating_id, 
 		timestamp,
 		start_time, 
@@ -38,10 +39,21 @@ func (r ParaphraseRespository) Create(paraphrase models.Paraphrase) (models.Para
 		:start_time,
 		:end_time, 
 		:original_file_uri, 
-		:result_file_uri)`, paraphrase)
+		:result_file_uri) RETURNING id`, paraphrase)
+
+	defer res.Close()
 
 	if err == nil {
-		id, _ := res.LastInsertId() // Check compatibility with other databases
+		var id int64
+		if res.Next() {
+			err := res.Scan(&id)
+			if err != nil {
+				log.Printf("[ParaphraseRespository][Create] Error - Error scanning returned Id: %v\n", err)
+				return paraphrase, err
+			}
+		}
+
+		log.Printf("[ParaphraseRespository][Create] Debug - LastInsertId %d", id)
 		uParaphrase, err := r.GetById(id)
 		if err == nil {
 			return uParaphrase, nil
