@@ -13,7 +13,7 @@ def read_root():
 
 
 @app.post("/paraphrase")
-async def paraphrase_item(original: str, request_id: str = 'deduplicate'):
+async def paraphrase_item(original: str = Body(..., embed=True), request_id: str = 'deduplicate'):
     result = get_response(original)
     return {
         "request_id": request_id,
