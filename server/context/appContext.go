@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"server/core/infrastructure"
+	aimodel "server/external/ai-model"
 	"server/external/postgresql"
 	"server/external/s3"
 
@@ -17,8 +18,8 @@ type AppContext struct {
 	Db                    sqlx.DB
 	UserRepository        infrastructure.UserRepository
 	ParaphraseRespository infrastructure.ParaphraseRespository
-	//RatingRepository infrastructure.RatingRepository,
-	Storage infrastructure.StorageClient
+	Storage               infrastructure.StorageClient
+	ParaphraseApi         infrastructure.ParaphrasingApi
 }
 
 func initDb() sqlx.DB {
@@ -49,14 +50,20 @@ func initStorge() infrastructure.StorageClient {
 	return s3.New(sesh)
 }
 
+func initAiApi() infrastructure.ParaphrasingApi {
+	return aimodel.New()
+}
+
 func InitAppContext() AppContext {
 	db := initDb()
 	storage := initStorge()
+	paraphraseApi := initAiApi()
 
 	return AppContext{
 		Db:                    db,
 		UserRepository:        postgresql.NewUserRepository(db),
 		ParaphraseRespository: postgresql.NewParaphraseRepository(db),
 		Storage:               storage,
+		ParaphraseApi:         paraphraseApi,
 	}
 }

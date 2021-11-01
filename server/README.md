@@ -1,5 +1,15 @@
 # Server
 Back end server for ParaphrAce Written in Go
+Exposes the api on port 8080 by default.
+
+## Requirements
+You will need the following to run the server:
+- PostgreSQL Database: A postgresql database  to connect to with SSL enabled;
+- AWS S3 Bucket: An S3 bucket with credentials for an IAM account with the permissions to put objects;
+- Paraphrasing Api: A Paraphrasing API, specifically the one in this monorepo that implements the Pegasus model.
+
+## Routes
+
 
 ## Environment variables
 | Variable                | Required | Description                                                  |
@@ -13,3 +23,4 @@ Back end server for ParaphrAce Written in Go
 | `AWS_SECRET_ACCESS_KEY` | Yes      | AWS secret for accessing s3                                  |
 | `AWS_REGION`            | Yes      | AWS region to use                                            |
 | `S3_BUCKET_NAME`        | Yes      | Name of the S3 Bucket to use                                 |
+| `PEGASUS_API_URL`       | Yes      | Url of the Pegasus api. Api must expose `/paraphrase` route. |

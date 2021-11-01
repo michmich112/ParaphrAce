@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -8,35 +9,15 @@ import (
 	"server/context"
 	"server/core/models"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type createParaphraseReq struct {
 	SessionToken string `json:"session_token"`
-	OriginalText string `json:"text"`
+	OriginalText string `json:"original_text"`
 }
 
-// CreateUser creates a new user in the DB
-func CreateUser(appCtx context.AppContext) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Context-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-		token := uuid.New().String()
-		user, err := appCtx.UserRepository.Create(models.User{SessionToken: token})
-		if err != nil {
-			log.Println("Could not create new user")
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("500 - Could not create new user"))
-			return
-		}
-		log.Printf("Created new user with session token: %s", user.SessionToken)
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(user)
-	}
+type createParaphraseRes struct {
+	Result string `json:"result"`
 }
 
 // CreateParaphrase creates a new paraphrase in the DB
@@ -83,17 +64,49 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 
 		// Update metadata with Uri of the original text
 		p.OriginalFileUri = uri
-		appCtx.ParaphraseRespository.Update(p)
+		p, _ = appCtx.ParaphraseRespository.Update(p)
 
 		// Call ML api
-		// store returned test to storage
+		pr, err := appCtx.ParaphraseApi.RequestParaphrase(reqBody.OriginalText)
+
+		if err != nil {
+			log.Printf("[Paraphrase Create][Error] - Error from Paraphrase Api: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		// store returned text to storage
+		resUri, err := appCtx.Storage.Save(fmt.Sprintf("%d-result", p.Id), pr.Paraphrase)
+		if err != nil {
+			log.Printf("[Paraphrase Create][Error] - Error saving result to Storage: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
 		// update paraphrase in DB
-		// return storage uri
+		p.ResultFileUri = sql.NullString{
+			String: resUri,
+			Valid:  true,
+		}
+		p.StartTime = sql.NullTime{
+			Time:  pr.StartTime,
+			Valid: true,
+		}
+		p.EndTime = sql.NullTime{
+			Time:  pr.EndTime,
+			Valid: true,
+		}
+
+		// update in DB
+		p, _ = appCtx.ParaphraseRespository.Update(p)
 
 		// format a response object
-		//res := "" //Todo implement this
+		res := createParaphraseRes{
+			Result: pr.Paraphrase,
+		}
+
+		log.Println("[Paraphrase Create][Success]")
 		// send the response
-		//json.NewEncoder(w).Encode(res)
-		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(res)
 	}
 }
