@@ -6,3 +6,6 @@
 
 ## Running the project
 `uvicorn main:app --reload`
+
+## API Docs
+After running the app, docs are available in [localhost:8000/docs](localhost:8000/docs)
