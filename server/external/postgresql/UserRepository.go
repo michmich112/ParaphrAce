@@ -12,7 +12,14 @@ type UserRepository struct {
 	table string
 }
 
+const userSchema = `
+	CREATE TABLE IF NOT EXISTS users (
+		id BIGSERIAL PRIMARY KEY,
+		session_token TEXT NOT NULL
+	);`
+
 func NewUserRepository(db sqlx.DB) infrastructure.UserRepository {
+	db.MustExec(userSchema)
 	return UserRepository{
 		db:    db,
 		table: "users",

@@ -1,0 +1,55 @@
+version: "3.0"
+
+services:
+
+  postgres:
+    image: postgres:alpine
+    restart: on-failure
+    networks:
+      - postgresnet
+    ports:
+      - "5432:5432"
+    # volumes:
+    #   - "~/docker/paraphrace/postgres/data:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_USER: paraphrace
+      POSTGRES_PASSWORD: password
+
+  model:
+    build:
+      context: ./model
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    ports:
+      - "8000:8000"
+    environment:
+      PORT: 8000
+    restart: on-failure
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    depends_on: 
+      - model
+      - postgres
+    networks:
+      - postgresnet
+      - backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB_NAME: paraphrace
+      POSTGRES_USER: paraphrace
+      POSTGRES_PASSWORD: password
+      POSTGRES_SSL: disable
+      PEGASUS_API_URL: http://model:8000
+
+networks:
+  postgresnet:
+  backend:

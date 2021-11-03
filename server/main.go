@@ -24,7 +24,7 @@ func main() {
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Fatalln("Unable to read environment variables from .env file.")
+		log.Println("Unable to read environment variables from .env file. Verify that the environment contains all the necessary variables")
 	}
 
 	ctx := aCtx.InitAppContext()

@@ -29,8 +29,12 @@ func initDb() sqlx.DB {
 	var database string = os.Getenv("POSTGRES_DB_NAME")
 	var username string = os.Getenv("POSTGRES_USER")
 	var password string = os.Getenv("POSTGRES_PASSWORD")
+	var ssl string = os.Getenv("POSTGRES_SSL")
 
 	sqlInfo := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s", host, port, username, password, database)
+	if ssl != "" {
+		sqlInfo = fmt.Sprintf("%s sslmode=%s", sqlInfo, ssl)
+	}
 	db, err := sqlx.Connect("postgres", sqlInfo)
 	if err != nil {
 		log.Println(err)

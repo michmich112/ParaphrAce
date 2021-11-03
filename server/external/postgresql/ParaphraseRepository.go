@@ -13,7 +13,21 @@ type ParaphraseRespository struct {
 	table string
 }
 
+const paraphraseSchema = `
+	CREATE TABLE IF NOT EXISTS paraphrase (
+		id BIGSERIAL PRIMARY KEY,
+		user_id BIGINT NOT NULL,
+		rating_id BIGINT,
+		timestamp TIMESTAMPTZ NOT NULL,
+		start_time TIMESTAMPTZ,
+		end_time TIMESTAMPTZ,
+		original_file_uri TEXT NOT NULL,
+		result_file_uri TEXT
+	);
+	`
+
 func NewParaphraseRepository(db sqlx.DB) infrastructure.ParaphraseRespository {
+	db.MustExec(paraphraseSchema) // create table if this is a new db
 	return ParaphraseRespository{
 		db:    db,
 		table: "paraphrase",
