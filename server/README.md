@@ -11,7 +11,10 @@ You will need the following to run the server:
 > Note: The PostgreSQL database must be using version 9 or later
 
 ## Routes
-
+| Route                   | Description                                              |
+|-------------------------|----------------------------------------------------------|
+| `api/user/create`       | Creates a new user and retrieve the valid session token. |
+| `api/paraphrase/create` | Create a new paraphrase from an input sentence.          |
 
 ## Environment variables
 | Variable                | Required | Description                                                  |
