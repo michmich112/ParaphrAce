@@ -56,5 +56,4 @@ func TestCreateUserPassing(t *testing.T) {
 	if user.Id == 0 || user.SessionToken == "" {
 		t.Errorf("Invalid User Data. Received user.Id: %d, user.SessionToken: %s", user.Id, user.SessionToken)
 	}
-
 }

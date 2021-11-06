@@ -28,6 +28,8 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Methods", "POST")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
+		// START Validate request
+
 		var reqBody createParaphraseReq
 		var timestamp time.Time = time.Now()
 
@@ -35,7 +37,9 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&reqBody)
 
 		if err != nil {
-			log.Fatalf("Unable to decode the request body.  %v", err)
+			log.Printf("Unable to decode the request body.  %v", err)
+			w.WriteHeader(http.StatusBadRequest)
+			return
 		}
 
 		user, err := appCtx.UserRepository.GetBySessionToken(reqBody.SessionToken)
@@ -44,6 +48,13 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
+
+		if reqBody.OriginalText == "" {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		// END Validate request
 
 		p := models.Paraphrase{
 			UserId:    user.Id,
