@@ -28,3 +28,9 @@ type Rating struct {
 	Comment      sql.NullString `json:"comment" db:"comment"`
 	Value        int16          `json:"value" db:"value"`
 }
+
+type ParaphraseResponse struct {
+	StartTime  time.Time `json:"start_time"`
+	EndTime    time.Time `json:"end_time"`
+	Paraphrase string    `json:"result"`
+}

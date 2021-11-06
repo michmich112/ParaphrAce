@@ -11,7 +11,7 @@ type ParaphraseRespository interface {
 	GetById(id int64) (models.Paraphrase, error)
 	Create(paraphrase models.Paraphrase) (models.Paraphrase, error)
 	Update(paraphrase models.Paraphrase) (models.Paraphrase, error)
-	AddRating(ratingId int64) (models.Paraphrase, error)
+	AddRating(paraphraseId int64, ratingId int64) (models.Paraphrase, error)
 }
 
 type RatingRepository interface {
