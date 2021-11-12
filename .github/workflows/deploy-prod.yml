@@ -20,6 +20,35 @@ jobs:
         run: |
           docker login --username=_ --password=$HEROKU_AUTH_TOKEN registry.heroku.com
           docker push registry.heroku.com/sem-test-1101/web
+          
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku --version # verify install
+          echo "machine api.heroku.com\n\tlogin mcantacu@andrew.cmu.edu\n\tpassword $HEROKU_AUTH_TOKEN" > ~/.netrc
+          
+          heroku container:release web -a sem-test-1101
         env:
           HEROKU_AUTH_TOKEN: ${{ secrets.HEROKU_AUTH_TOKEN }}
+  
+  deploy-ml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build container
+        working-directory: ./model
+        run: | 
+          docker build -t model .
+          docker tag model registry.heroku.com/sem-ml-1101/web
+      - name: login to heroku and push image
+        run: |
+          APP_NAME=sem-ml-1101
+
+          docker login --usrename=_ --password=$HEROKU_AUTH_TOKEN registry.heroku.com
+          docker push registry.heroku.com/$APP_NAME/web
+          
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku --version
+          echo "machine api.heroku.com\n\tlogin mcantacu@andrew.cmu.edu\n\tpassword $HEROKU_AUTH_TOKEN" > ~/.netrc
+          
+          heroku container:release web -a APP_NAME
+
           
