@@ -30,6 +30,7 @@ You will need the following to run the server:
 | `AWS_REGION`            | Yes      | AWS region to use                                            |
 | `S3_BUCKET_NAME`        | Yes      | Name of the S3 Bucket to use                                 |
 | `PEGASUS_API_URL`       | Yes      | Url of the Pegasus api. Api must expose `/paraphrase` route. |
+| `PORT`                  | No       | Default `8080`, the port on which to expose the API          | 
 
 ## Testing
 To run the unit tests of the application, run the following command: `go test ./...` in the `server` directory.
