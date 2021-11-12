@@ -1,0 +1,25 @@
+name: Deploy to Production
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch:
+
+jobs:
+  deploy-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: test and build container
+        working-directory: ./server
+        run: |
+          go test ./... 
+          docker build -t server .
+          docker tag server registry.heroku.com/sem-test-1101/web
+      - name: login to heroku and push image
+        run: |
+          docker login --username=_ --password=$HEROKU_AUTH_TOKEN registry.heroku.com
+          docker push registry.heroku.com/sem-test-1101/web
+        env:
+          HEROKU_AUTH_TOKEN: ${{ secrets.HEROKU_AUTH_TOKEN }}
+          
