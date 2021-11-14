@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	aCtx "server/context"
 	"server/router"
 
@@ -29,10 +30,13 @@ func main() {
 
 	ctx := aCtx.InitAppContext()
 
-	port := 8080
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 	r := router.Router(ctx)
 	// r.Use(AppContextMiddleware(ctx))
 
-	fmt.Printf("Starting server on port %d\n", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), r))
+	fmt.Printf("Starting server on port %s\n", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), r))
 }

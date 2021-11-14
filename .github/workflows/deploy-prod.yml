@@ -1,0 +1,54 @@
+name: Deploy to Production
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch:
+
+jobs:
+  deploy-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: test and build container
+        working-directory: ./server
+        run: |
+          go test ./... 
+          docker build -t server .
+          docker tag server registry.heroku.com/sem-test-1101/web
+      - name: login to heroku and push image
+        run: |
+          docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+          docker push registry.heroku.com/sem-test-1101/web
+          
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku --version # verify install
+          
+          heroku container:release web -a sem-test-1101
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_AUTH_TOKEN }}
+  
+  deploy-ml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build container
+        working-directory: ./model
+        run: | 
+          docker build -t model .
+          docker tag model registry.heroku.com/sem-ml-1101/web
+      - name: login to heroku and push image
+        run: |
+          APP_NAME=sem-ml-1101
+
+          docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+          docker push registry.heroku.com/$APP_NAME/web
+          
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku --version
+
+          heroku container:release web -a APP_NAME
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_AUTH_TOKEN }}
+
+          
