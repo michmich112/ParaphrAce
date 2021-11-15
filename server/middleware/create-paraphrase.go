@@ -28,6 +28,12 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 		w.Header().Set("Access-Control-Allow-Methods", "POST")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
+		log.Printf("[CreateParaphrase] - Method %v", r.Method)
+
+		if r.Method == http.MethodOptions {
+			return
+		}
+
 		// START Validate request
 
 		var reqBody createParaphraseReq

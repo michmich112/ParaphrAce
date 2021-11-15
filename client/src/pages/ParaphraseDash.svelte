@@ -1,15 +1,43 @@
 <script lang="ts">
+  import { userStore } from "../store";
+  import { getParaphrase, User } from "../infratructure/paraphrace";
+  import Loader from "../components/Loader.svelte";
+
+  let loading: boolean = false;
+  let originalText: string = "";
+  let resultText: string = "";
+  let user: User;
+
+  userStore.subscribe((v) => (user = v));
+
+  async function parphraseIt() {
+    if (originalText === "") {
+      resultText = "Nothing to paraphrase here ¯\\_(ツ)_/¯ ";
+      return;
+    }
+    loading = true;
+    try {
+      const res = await getParaphrase(user, originalText);
+      resultText = res;
+      loading = false;
+    } catch (err) {
+      loading = false;
+      console.error(err);
+      alert("Error getting paraphrase from API. Contact Support.");
+    }
+  }
 </script>
 
+<Loader show={loading} />
 <main>
   <div>
     <h1>Source</h1>
-    <textarea />
+    <textarea bind:value={originalText} />
   </div>
-  <button>Generate</button>
+  <button on:click={parphraseIt}>Generate</button>
   <div>
     <h1>Results</h1>
-    <textarea readonly />
+    <textarea bind:value={resultText} readonly />
   </div>
 </main>
 

@@ -10,11 +10,11 @@ function persistentStore<T>(name: string, initial: T): Writable<T> {
 
 export type UserStore = {
   id: number,
-  token: string,
+  session_token: string,
 }
 
 export const userStore = persistentStore<UserStore>("userStore", {
   id: -1,
-  token: "",
+  session_token: "",
 })
 
