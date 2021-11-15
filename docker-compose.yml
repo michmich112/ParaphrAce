@@ -59,8 +59,6 @@ services:
       - model
       - postgres
       - server
-    networks:
-      - backend
     ports:
       - "5000:5000"
     
