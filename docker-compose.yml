@@ -54,7 +54,7 @@ services:
       context: ./client
       dockerfile: Dockerfile
       args:
-        PARAPHRACE_API_URL: "http://server:8080/"
+        PARAPHRACE_API_URL: "http://localhost:8080/"
     depends_on:
       - model
       - postgres

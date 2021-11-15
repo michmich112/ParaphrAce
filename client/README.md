@@ -25,5 +25,5 @@ By default, the server will only respond to requests from localhost. To allow co
 To connect to the backend server you'll need to have the following environment variables set up:
 | Variable             | Required | Description                                                                               |
 |----------------------|----------|-------------------------------------------------------------------------------------------|
-| `PARAPHRACE_API_URL` | Yes      | URL for the paraphrace api. Must be of the form `http://url.com` without a `/` at the end.|
+| `PARAPHRACE_API_URL` | Yes      | URL for the paraphrace api. Must be of the form `http://url.com/` with a `/` at the end.|
 
