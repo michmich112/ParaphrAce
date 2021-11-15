@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { navigate } from "svelte-routing";
+  function getStartedOnClick() {
+    navigate("/paraphrase");
+  }
 </script>
 
 <main>
@@ -6,7 +10,7 @@
     <div class="landing-card-item">
       <h1>Paraphrase like a pro with A.I.</h1>
       <p>Generate tailored paraphrases for your reports, essays</p>
-      <button>Get Started </button>
+      <button on:click={getStartedOnClick}>Get Started </button>
     </div>
     <div class="landing-card-item">
       <div
@@ -24,7 +28,7 @@
     </div>
     <div class="landing-card-item">
       <h1>Write your papers worry free, directly from your browser</h1>
-      <button>Get Started </button>
+      <button on:click={getStartedOnClick}>Get Started </button>
     </div>
   </div>
 </main>

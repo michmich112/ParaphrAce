@@ -1,5 +1,5 @@
 <ul>
-  <li>Paraphrace</li>
+  <li><a href="/">Paraphrace</a></li>
 </ul>
 
 <style>
@@ -17,6 +17,14 @@
 
   li {
     float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  li a {
     display: block;
     color: black;
     text-align: center;
