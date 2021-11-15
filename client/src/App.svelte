@@ -1,30 +1,33 @@
 <script lang="ts">
-	export let name: string;
+  import { userStore, UserStore } from "./store";
+  import { onMount } from "svelte";
+  import { getUser } from "./infratructure/paraphrace";
+
+  import Landing from "./pages/Landing.svelte";
+  import ParaphraseDash from "./pages/Landing.svelte";
+
+  import { Router, Route } from "svelte-routing";
+
+  let user: UserStore;
+
+  $: url = window.location.pathname;
+
+  userStore.subscribe((v) => (user = v));
+
+  onMount(async () => {
+    if (user.id === -1 || user.token === "") {
+      try {
+        const u = await getUser();
+        userStore.set(u);
+      } catch (e) {
+        console.error("Error getting user", e);
+        alert("Unable to access API. Contact support");
+      }
+    }
+  });
 </script>
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
-
-<style>
-	main {
-		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
-	}
-</style>
+<Router {url}>
+  <Route path="/paraphrase" component={ParaphraseDash} />
+  <Route path="/" component={Landing} />
+</Router>
