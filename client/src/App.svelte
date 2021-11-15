@@ -3,8 +3,9 @@
   import { onMount } from "svelte";
   import { getUser } from "./infratructure/paraphrace";
 
+  import Header from "./components/Header.svelte";
   import Landing from "./pages/Landing.svelte";
-  import ParaphraseDash from "./pages/Landing.svelte";
+  import ParaphraseDash from "./pages/ParaphraseDash.svelte";
 
   import { Router, Route } from "svelte-routing";
 
@@ -21,13 +22,15 @@
         userStore.set(u);
       } catch (e) {
         console.error("Error getting user", e);
-        alert("Unable to access API. Contact support");
+        // alert("Unable to access API. Contact support");
       }
     }
   });
 </script>
 
+<Header />
 <Router {url}>
   <Route path="/paraphrase" component={ParaphraseDash} />
-  <Route path="/" component={Landing} />
+  <Route component={Landing} />
 </Router>
+

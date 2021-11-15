@@ -1,8 +1,6 @@
 <script lang="ts">
-  import Header from "../components/Header.svelte";
 </script>
 
-<Header />
 <main>
   <div class="landing-card">
     <div class="landing-card-item">
