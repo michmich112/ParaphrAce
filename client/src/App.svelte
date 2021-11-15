@@ -22,7 +22,7 @@
         userStore.set(u);
       } catch (e) {
         console.error("Error getting user", e);
-        // alert("Unable to access API. Contact support");
+        alert("Unable to access API. Contact support");
       }
     }
   });

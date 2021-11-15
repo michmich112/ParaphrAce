@@ -5,8 +5,12 @@ export type User = {
 
 // could do with a bit more/better error handling
 export async function getUser(): Promise<User> {
-  const url = `${process.env.PARAPHRACE_API_URL}/api/user/create`
-  const res = await fetch(url)
+  const url = `${process.env.PARAPHRACE_API_URL}api/user/create`
+  const res = await fetch(url, {
+    method: 'POST',
+    mode: 'cors',
+  })
+
   return await res.json() as User;
 }
 

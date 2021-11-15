@@ -49,6 +49,22 @@ services:
       POSTGRES_SSL: disable
       PEGASUS_API_URL: http://model:8000
 
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+      args:
+        PARAPHRACE_API_URL: "http://server:8080/"
+    depends_on:
+      - model
+      - postgres
+      - server
+    networks:
+      - backend
+    ports:
+      - "5000:5000"
+    
+
 networks:
   postgresnet:
   backend:

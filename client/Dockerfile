@@ -4,6 +4,9 @@ WORKDIR /usr/local/client
 
 COPY . .
 
+ARG PARAPHRACE_API_URL
+ENV PARAPHRACE_API_URL=${PARAPHRACE_API_URL}
+
 RUN npm install
 RUN npm run build
 
