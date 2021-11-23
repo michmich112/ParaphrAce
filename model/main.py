@@ -13,7 +13,7 @@ def read_root():
 
 
 @app.post("/paraphrase")
-async def paraphrase_item(original: str = Body(..., embed=True), request_id: str = 'deduplicate'):
+async def paraphrase_request(original: str = Body(..., embed=True), request_id: str = 'deduplicate'):
     isoLayout = '%Y-%m-%dT%H:%M:%S.%f'
     start_time = datetime.datetime.utcnow().replace(tzinfo=datetime.timezone.utc).strftime(isoLayout)[:-3]+"Z"
     result = get_response(original)
