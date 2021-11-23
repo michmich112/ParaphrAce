@@ -7,6 +7,4 @@ RUN apt-get update && apt-get install git-lfs && git clone https://huggingface.c
 
 COPY . .
 
-EXPOSE $PORT
-
 CMD uvicorn main:app --host 0.0.0.0 --port $PORT

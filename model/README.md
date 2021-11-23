@@ -15,7 +15,7 @@
 docker build -t model:latest .
 
 # start docker container
-docker run -d -p "3000:8888" -e PORT=8888 model
+docker run -d -p "8000:8000" -e PORT=8000 model
 ```
 
 ## API Docs
