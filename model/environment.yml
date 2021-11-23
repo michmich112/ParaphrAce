@@ -1,0 +1,49 @@
+name: paraphrace
+channels:
+  - conda-forge
+dependencies:
+  - ca-certificates=2021.10.8=h4653dfc_0
+  - libzlib=1.2.11=hee7b306_1013
+  - ncurses=6.2=h9aa5885_4
+  - openssl=1.1.1l=h3422bc3_0
+  - pip=21.3.1=pyhd8ed1ab_0
+  - python=3.9.6=h54d631c_1_cpython
+  - python_abi=3.9=2_cp39
+  - readline=8.1=hedafd6a_0
+  - setuptools=59.2.0=py39h2804cbe_0
+  - sqlite=3.36.0=h72a2b83_2
+  - tk=8.6.11=he1e0b03_1
+  - tzdata=2021e=he74cb21_0
+  - wheel=0.37.0=pyhd8ed1ab_1
+  - xz=5.2.5=h642e427_1
+  - zlib=1.2.11=hee7b306_1013
+  - pip:
+    - asgiref==3.4.1
+    - certifi==2021.10.8
+    - charset-normalizer==2.0.7
+    - click==8.0.3
+    - fastapi==0.68.2
+    - filelock==3.4.0
+    - h11==0.12.0
+    - huggingface-hub==0.1.2
+    - idna==3.3
+    - joblib==1.1.0
+    - numpy==1.21.4
+    - packaging==21.3
+    - pydantic==1.8.2
+    - pyparsing==3.0.6
+    - pyyaml==6.0
+    - regex==2021.11.10
+    - requests==2.26.0
+    - sacremoses==0.0.46
+    - sentencepiece==0.1.96
+    - six==1.16.0
+    - starlette==0.14.2
+    - tokenizers==0.10.3
+    - torch==1.10.0
+    - tqdm==4.62.3
+    - transformers==4.12.5
+    - typing-extensions==4.0.0
+    - urllib3==1.26.7
+    - uvicorn==0.15.0
+prefix: /Users/lg/miniforge3/envs/paraphrace
