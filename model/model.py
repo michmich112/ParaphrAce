@@ -15,5 +15,5 @@ def paraphrase_sentence(input_text,num_return_sequences=1,num_beams=20):
   batch = tokenizer([input_text],truncation=True,padding='longest',max_length=60, return_tensors="pt").to(torch_device)
   translated = model.generate(**batch,max_length=60,num_beams=num_beams, num_return_sequences=num_return_sequences, temperature=1.5)
   tgt_text = tokenizer.batch_decode(translated, skip_special_tokens=True)
-  return tgt_text
+  return tgt_text[0]
   
