@@ -2,7 +2,10 @@ name: Deploy to Production
 on:
   push:
     branches:
-      - release
+      - master
+    paths:
+      - server/**
+      - model/**
   workflow_dispatch:
 
 jobs:

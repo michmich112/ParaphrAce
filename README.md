@@ -29,6 +29,11 @@ The model is exported on port `8000` by default.
 
 > Troubleshooting: if you are unable to start the application due to a docker error, try allowing more memory to the docker engine (through the docker dashboard). We've tested it with 4 CPUs & 8 GB of memory.
 
+## Production Deployment
+We've set up a Continuous deployment pipeline. To deploy, simply merge your commit into the `master` branch and the changes will be automatically deployed to the production instances.\
+The client is hosted on Netlify while the Server and the Model are both hosted on Heroku.\
+There are no configurations for you to add for this deployment to take effect properly.\
+
 ## Client
 Front end client source code written in svelte and typescript
 
