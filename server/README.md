@@ -25,10 +25,10 @@ You will need the following to run the server:
 | `POSTGRES_USER`         | Yes      | User with which to connect to the PostgreSQL database        |
 | `POSTGRES_PASSWORD`     | Yes      | Password of the User with which to connect to the PostgreSQL |
 | `POSTGRES_SSL`          | No       | Ssl connection mode, enabled by default                      |         
-| `AWS_ACCESS_KEY_ID`     | Yes      | AWS access key for s3                                        |
-| `AWS_SECRET_ACCESS_KEY` | Yes      | AWS secret for accessing s3                                  |
-| `AWS_REGION`            | Yes      | AWS region to use                                            |
-| `S3_BUCKET_NAME`        | Yes      | Name of the S3 Bucket to use                                 |
+| `AWS_ACCESS_KEY_ID`     | No       | AWS access key for s3. Required for storage                  |
+| `AWS_SECRET_ACCESS_KEY` | No       | AWS secret for accessing s3, Required for storage            |
+| `AWS_REGION`            | No       | AWS region to use, Required for storage                      |
+| `S3_BUCKET_NAME`        | No       | Name of the S3 Bucket to use, Required for storage           |
 | `PEGASUS_API_URL`       | Yes      | Url of the Pegasus api. Api must expose `/paraphrase` route. |
 | `PORT`                  | No       | Default `8080`, the port on which to expose the API          | 
 

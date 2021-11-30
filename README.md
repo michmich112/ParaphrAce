@@ -2,6 +2,9 @@
 
 ## Get started
 First verify that you have Docker and Docker compose installed on your device.\
+
+### With Storage
+To use storage of the input and resulting sentences you will need to set up an AWS S3 bucket. The following steps are not necessary if you do not want or need storage.\
 Create an S3 bucket in AWS, and an IAM user in the AWS console. The IAM user must be authenticated by Access key and Secret.\
 Once the bucket created create a `.env` file at the root of the project with the following variables:
 
@@ -12,8 +15,15 @@ Once the bucket created create a `.env` file at the root of the project with the
 | `AWS_REGION`            | AWS region to use                                            |
 | `S3_BUCKET_NAME`        | Name of the S3 Bucket to use                                 |
 
-Once set run the following command: `docker compose build && docker compose up`
-And the services will start up and you can start using the api on port `8080`. 
+### Start the services
+
+Run the following command: `docker compose build && docker compose up`
+And the services will start up and you can access them here:
+| service | port   | link                           |
+|---------|--------|--------------------------------|
+| Server  | `8080` | [api](http://localhost:8080)   |
+| Model   | `8000` | [model](http://localhost:8000) |
+| Client  | `5000` | [client](http://localhost:5000)|
 
 You can connect to the Postgresql instace with the following credentials.
 - host: `localhost`
@@ -22,8 +32,6 @@ You can connect to the Postgresql instace with the following credentials.
 - password: `password`
 - db name: `paraphrace`
 - SSL: `disable`
-
-The model is exported on port `8000` by default.
 
 > Note: You may need to restart the application after the initial boot. Just press `Ctrl+C` and then run `docker compose up once more`. The boot process can take up to a minute.
 
