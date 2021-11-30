@@ -18,6 +18,7 @@ type AppContext struct {
 	Db                    sqlx.DB
 	UserRepository        infrastructure.UserRepository
 	ParaphraseRespository infrastructure.ParaphraseRespository
+	WithStorage           bool
 	Storage               infrastructure.StorageClient
 	ParaphraseApi         infrastructure.ParaphrasingApi
 }
@@ -44,14 +45,15 @@ func initDb() sqlx.DB {
 	return *db
 }
 
-func initStorge() infrastructure.StorageClient {
+func initStorge() (infrastructure.StorageClient, bool) {
 	sesh, err := session.NewSession()
 
 	if err != nil {
-		log.Fatalf("[InitStorage] Unable to create connection to S3 storage.")
+		log.Println("[InitStorage] Unable to create connection to S3 storage. Continuing without storage.")
+		return s3.S3Client{}, false
 	}
 
-	return s3.New(sesh)
+	return s3.New(sesh), true
 }
 
 func initAiApi() infrastructure.ParaphrasingApi {
@@ -60,13 +62,14 @@ func initAiApi() infrastructure.ParaphrasingApi {
 
 func InitAppContext() AppContext {
 	db := initDb()
-	storage := initStorge()
+	storage, withStorage := initStorge()
 	paraphraseApi := initAiApi()
 
 	return AppContext{
 		Db:                    db,
 		UserRepository:        postgresql.NewUserRepository(db),
 		ParaphraseRespository: postgresql.NewParaphraseRepository(db),
+		WithStorage:           withStorage,
 		Storage:               storage,
 		ParaphraseApi:         paraphraseApi,
 	}

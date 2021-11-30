@@ -77,11 +77,17 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 		}
 
 		// store original text to storage
-		uri, err := appCtx.Storage.Save(fmt.Sprintf("%d-original", p.Id), reqBody.OriginalText)
+		if appCtx.WithStorage {
+			uri, err := appCtx.Storage.Save(fmt.Sprintf("%d-original", p.Id), reqBody.OriginalText)
 
-		// Update metadata with Uri of the original text
-		p.OriginalFileUri = uri
-		p, _ = appCtx.ParaphraseRespository.Update(p)
+			if err != nil {
+				log.Printf("[Paraphrase Create][Error] - Error saving original text to storage: %v \n Continuing without saving. Original text: %s", err, reqBody.OriginalText)
+			}
+
+			// Update metadata with Uri of the original text
+			p.OriginalFileUri = uri
+			p, _ = appCtx.ParaphraseRespository.Update(p)
+		}
 
 		// Call ML api
 		pr, err := appCtx.ParaphraseApi.RequestParaphrase(reqBody.OriginalText)
@@ -92,19 +98,21 @@ func CreateParaphrase(appCtx context.AppContext) http.HandlerFunc {
 			return
 		}
 
-		// store returned text to storage
-		resUri, err := appCtx.Storage.Save(fmt.Sprintf("%d-result", p.Id), pr.Paraphrase)
-		if err != nil {
-			log.Printf("[Paraphrase Create][Error] - Error saving result to Storage: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
+		if appCtx.WithStorage {
+
+			// store returned text to storage
+			resUri, err := appCtx.Storage.Save(fmt.Sprintf("%d-result", p.Id), pr.Paraphrase)
+
+			if err != nil {
+				log.Printf("[Paraphrase Create][Error] - Error saving result to Storage: %v \n Continuing without saving. Resulting text: %s", err, pr.Paraphrase)
+			}
+			// update paraphrase in DB
+			p.ResultFileUri = sql.NullString{
+				String: resUri,
+				Valid:  true,
+			}
 		}
 
-		// update paraphrase in DB
-		p.ResultFileUri = sql.NullString{
-			String: resUri,
-			Valid:  true,
-		}
 		p.StartTime = sql.NullTime{
 			Time:  pr.StartTime,
 			Valid: true,

@@ -86,7 +86,7 @@ func (mam MockAiModel) RequestParaphrase(originalText string) (models.Paraphrase
 	}, nil
 }
 
-func createMockedAppContext() context.AppContext {
+func createMockedAppContext(withStorage bool) context.AppContext {
 	mockUserRepository := MockUserRepository{
 		user: models.User{Id: 5, SessionToken: "token_5"},
 	}
@@ -104,6 +104,7 @@ func createMockedAppContext() context.AppContext {
 	mockContext := context.AppContext{
 		UserRepository:        mockUserRepository,
 		ParaphraseRespository: mockParaphraseRepository,
+		WithStorage:           withStorage,
 		Storage:               mockStorageClient,
 		ParaphraseApi:         mockAiModel,
 	}
@@ -111,8 +112,8 @@ func createMockedAppContext() context.AppContext {
 	return mockContext
 }
 
-func TestCreateParaphrasePassing(t *testing.T) {
-	mockContext := createMockedAppContext()
+func TestCreateParaphrasePassingWithStorage(t *testing.T) {
+	mockContext := createMockedAppContext(true)
 
 	bodyText := `{
 		"session_token": "token_5",
@@ -140,8 +141,37 @@ func TestCreateParaphrasePassing(t *testing.T) {
 	}
 }
 
+func TestCreateParaphrasePassingWithoutStorage(t *testing.T) {
+	mockContext := createMockedAppContext(false)
+
+	bodyText := `{
+		"session_token": "token_5",
+		"original_text": "I've Got a feeling, that its going to be a good time."
+	}`
+
+	req, err := http.NewRequest("POST", "/api/paraphrase/create", strings.NewReader(bodyText))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+
+	CreateParaphrase(mockContext).ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("Expected status code OK, received %v", status)
+	}
+
+	cpRes := createParaphraseRes{}
+	json.NewDecoder(rr.Body).Decode(&cpRes)
+
+	if cpRes.Result != "'ve Got a feeling, that its going to be a good time." {
+		t.Errorf("Expected paraphrase, received %s", cpRes.Result)
+	}
+}
+
 func TestCreateParaphraseInvalidToken(t *testing.T) {
-	mockContext := createMockedAppContext()
+	mockContext := createMockedAppContext(true)
 
 	bodyText := `{
 		"session_token": "invalid_token",
@@ -168,7 +198,7 @@ func TestCreateParaphraseInvalidToken(t *testing.T) {
 }
 
 func TestCreateParaphraseNoOriginalText(t *testing.T) {
-	mockContext := createMockedAppContext()
+	mockContext := createMockedAppContext(true)
 
 	bodyText := `{
 		"session_token": "token_5"
@@ -193,7 +223,7 @@ func TestCreateParaphraseNoOriginalText(t *testing.T) {
 }
 
 func TestCreateParaphraseNonJsonContent(t *testing.T) {
-	mockContext := createMockedAppContext()
+	mockContext := createMockedAppContext(true)
 
 	bodyText := "Create a paraphrase for me please"
 
